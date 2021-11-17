@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block title %}메인 페이지{% endblock %} {% block
+page_content %} {% if book_list %}
+<div class="container">
+    <div class="row">
+        {% for book in book_list%}
+        <div class="col-3">
+            <div class="card" sytle="">
+                <div class="card-header">{{ book.id }}</div>
+                <img src="../book_img/13.jpg" alt="" />
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.book_name }}</h5>
+                    <a href="#" class="btn btn-primary">대출하기</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<p>책이 없어요...</p>
+{% endif %} {% endblock %}

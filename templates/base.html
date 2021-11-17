@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='bootstrap.min.css') }}"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='my_styles.css') }}"
+        />
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <!-- 부트스트랩 내비게이션 -->
+        {% include "navbar.html" %} {% block content %}
+        <div class="container my-3">
+            <!-- flash -->
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+            <!-- 각 페이지의 내용 -->
+            {% block page_content %} {% endblock %}
+        </div>
+        {% endblock %}
+    </body>
+</html>
