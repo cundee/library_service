@@ -14,7 +14,8 @@ def create_app():
     Migrate().init_app(app, db)
 
     app.register_blueprint(api.bp)
-
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
     
 
     return app

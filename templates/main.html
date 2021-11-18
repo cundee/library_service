@@ -1,12 +1,18 @@
-{% extends "base.html" %} {% block title %}메인 페이지{% endblock %} {% block
-page_content %} {% if book_list %}
+{% extends "base.html" %} 
+{% block title %}메인 페이지{% endblock %} 
+
+{% block page_content %} 
+{% if book_list %}
 <div class="container">
     <div class="row">
         {% for book in book_list%}
         <div class="col-3">
             <div class="card" sytle="">
                 <div class="card-header">{{ book.id }}</div>
-                <img src="../book_img/13.jpg" alt="" />
+                <img 
+                    src="{{ url_for('static', filename='/book_img/{}.jpg'.format(book.id)) }}" 
+                    height="200px"
+                />
                 <div class="card-body">
                     <h5 class="card-title">{{ book.book_name }}</h5>
                     <a href="#" class="btn btn-primary">대출하기</a>

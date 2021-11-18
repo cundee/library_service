@@ -9,12 +9,11 @@
 ## 주요 사용 기술
 
 - Flask
-- PyMySQL
 - SQLAlchemy
-- MySQL
+- SQLite3
 - HTML with Jinja2
-- Flask-login
-- bcrypt
+- Migrate
+- werkzeug
 
 ## 페이지 구현
 
