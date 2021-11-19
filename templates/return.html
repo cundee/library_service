@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    <h4>반납하기</h4>
+    {% if not items %}
+        <p>반납할 책이 없습니다</p>
+    {% else %}
+        {% for item in items %}
+            <form action="{{ url_for('main.return_click', book_id=item.book_id) }}" method='post'>
+                <p>{{ item.book_name }}({{ item.rental_date }} ~ )</p>
+                <input class="btn btn-primary" type="submit" value="반납하기">
+            </form>
+        {% endfor%}
+    {% endif %}
+</div>
+{% endblock%}

@@ -28,8 +28,8 @@
             My Library
           </a>
           <ul class="dropdown-menu dropdown-menu" aria-labelledby="navbarDarkDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">대출기록</a></li>
-            <li><a class="dropdown-item" href="#">반납하기</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.my_return') }}">반납하기</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('main.my_record') }}">대출기록</a></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
         </li>

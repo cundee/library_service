@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    <h4>대출기록</h4>
+    {% if not items %}
+        <p>대여 기록이 없습니다</p>
+    {% else %}
+        {% for item in items %}
+            <p>{{ item.book_name }}({{ item.rental_date }} ~ {{ item.return_date }})</p>
+        {% endfor%}
+    {% endif %}
+</div>
+{% endblock%}
