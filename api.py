@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, session, redirect, url_for
-from sqlalchemy.sql.elements import Null
+from sqlalchemy.sql.elements import *
 from models.model import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
@@ -91,7 +91,7 @@ def book_detail(book_id):
     if reviews:
         for review in reviews:
             rating_sum += review.rating
-        avg = round(rating_sum / len(reviews))
+        avg = float(round(rating_sum / len(reviews)))
 
     return render_template("detail.html",book=book,reviews=reviews,avg=avg)
 
@@ -107,7 +107,7 @@ def rental_click(book_id):
         
         user = User.query.filter(User.id==session['login']).first()
         book = Books.query.filter(Books.id==book_id).first()
-        rental_info = Rental.query.filter(Rental.user_id==user.id,Rental.book_id==book.id).first()
+        rental_info = Rental.query.filter(Rental.user_id==user.id,Rental.book_id==book.id,Rental.return_date==None).first()
         remain = book.remain
 
         if remain == 0:
@@ -124,6 +124,33 @@ def rental_click(book_id):
             flash("책이 1권 대출되었습니다!")
             return render_template('detail.html',book=book)
 
+
+@bp.route('/book/write/<int:book_id>', methods=['POST'])
+def review_update(book_id):
+    user = User.query.filter(User.id==session['login']).first()
+    rental_record = Rental.query.filter(Rental.user_id==user.id,Rental.book_id==book_id).first()
+    if not rental_record:
+        flash("책을 이용한 이용자에게만 작성 권한이 주어집니다.")
+        return redirect(url_for('main.book_detail', book_id=book_id))
+    else:
+        rating = request.form['star']
+        content = request.form['content']
+
+        review = Review(user_id=user.id,book_id=book_id,nickname=user.nickname,rating=rating,content=content)
+        db.session.add(review)
+        db.session.commit()
+        
+        flash('리뷰가 등록되었습니다.')
+        return redirect(url_for('main.book_detail',book_id=book_id))
+
+@bp.route('/book/delete/<int:review_id>')
+def review_delete(review_id):
+    review = Review.query.filter(Review.id==review_id).first()
+
+    db.session.delete(review)
+    db.session.commit()
+    flash('리뷰가 삭제되었습니다.')
+    return redirect(url_for('main.book_detail',book_id=review.book_id))
 
 # 반납하기
 @bp.route('/return')
@@ -143,7 +170,7 @@ def return_click(book_id):
         return render_template('return.html')
     else:
         book = Books.query.filter(Books.id==book_id).first()
-        rental_info = Rental.query.filter(Rental.user_id==session['login'],Rental.book_id==book.id).first()
+        rental_info = Rental.query.filter(Rental.user_id==session['login'],Rental.book_id==book.id,Rental.return_date==None).first()
         if rental_info:
             remain = book.remain
             book.remain = remain + 1

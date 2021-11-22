@@ -31,7 +31,7 @@
                             <p>ISBN : {{ book.isbn }}</p>
                         </li>
                         <li class='list-group-item'>
-                            <a href="{{ book.link }}" target='_blank'>{{ book.link }}</a>
+                            <a href="{{ book.link }}" target='_blank'>링크</a>
                         </li>
                         <li class='list-group-item'>
                             <form action="{{ url_for('main.rental_click', book_id=book.id) }}" method='post'>
@@ -48,6 +48,38 @@
                 {{ book.description }}
             </div>
         </div>
+        <div class='col-9' style='margin:10px;'>
+            <h4>리뷰 (평점 : {{ avg }}/5.0)</h4>
+            {% for review in reviews %}
+                <div class='card' style='padding: 10px;'>
+                    <p>{{ review.nickname }}({{ review.rating }}) : {{review.content }}</p>
+                    {% if review.user_id == session['login'] %}
+                        <a class="btn btn-danger" href="{{ url_for('main.review_delete', review_id=review.id) }}">삭제하기</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if session['login'] %}
+        <div class='col-9' style='margin:10px;'>
+            <h4>리뷰 작성</h4>
+            <div class='card'>
+                <form action="{{ url_for('main.review_update',book_id=book.id) }}" method='post'>
+                    <select name="star">
+                        <option value="1">1점</option>
+                        <option value="2">2점</option>
+                        <option value="3">3점</option>
+                        <option value="4">4점</option>
+                        <option value="5">5점</option>
+                    </select>
+                    <div class='form-group'>
+                        <input class='form-control' name='content' placeholder="내용을 입력하세요.">
+                    </div>
+                    <input type="submit" class='btn btn-primary' value='작성하기'>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 
 </div>
