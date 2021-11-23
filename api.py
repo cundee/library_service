@@ -27,11 +27,15 @@ def register():
         telephone = request.form['telephone']
         
         user = User.query.filter(User.user_id == user_id).first()
+        nickname_ = User.query.filter(User.nickname==nickname).first()
         if user:
             flash("이미 가입된 아이디입니다.")
             return render_template('register.html')
         if user_pw != user_pw2:
             flash("비밀번호 확인이 일치하지 않습니다.") 
+            return render_template('register.html')
+        if nickname_:
+            flash("이미 사용중인 닉네임입니다.")
             return render_template('register.html')
         else:
             pw_hash = generate_password_hash(user_pw)

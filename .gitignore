@@ -3,3 +3,4 @@ __pycache__/
 books.csv
 *.zip
 book_img
+migrations

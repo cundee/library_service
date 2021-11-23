@@ -4,10 +4,10 @@
 {% block page_content %} 
 {% if book_list %}
 <div class="container">
-    <div class="row">
+    <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for book in book_list%}
-        <div class="col-3">
-            <div class="card" sytle="">
+        <div class="col">
+            <div class="card h-100">
                 <div class="card-header">{{ book.id }}</div>
                 <img 
                     src="{{ url_for('static', filename='/book_img/{}.jpg'.format(book.id)) }}" 
