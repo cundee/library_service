@@ -13,6 +13,7 @@ class Books(db.Model):
     description          = db.Column(db.Text())
     link                 = db.Column(db.String(100), nullable=False)
     remain               = db.Column(db.Integer, nullable=False, default=5)
+    star                 = db.Column(db.Integer, nullable=False, default=0)
 
 
 class User(db.Model):
@@ -45,4 +46,5 @@ class Review(db.Model):
     book_id              = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     rating               = db.Column(db.Float, nullable=False)
     content              = db.Column(db.Text(), nullable=False)
+    date                 = db.Column(db.Date, nullable=False)
     

@@ -101,21 +101,14 @@ def logout():
 def book_detail(book_id):
     book = Books.query.filter(Books.id==book_id).first()
     reviews = Review.query.filter(Review.book_id==book_id).all()
-
+    count = len(reviews)
     if not book:
         flash("책 정보가 없습니다.")
         return redirect(url_for('main.home'))
-    
-    rating_sum = 0
-    avg = 0
-    if reviews:
-        for review in reviews:
-            rating_sum += review.rating
-        avg = float(round(rating_sum / len(reviews)))
 
-    return render_template("detail.html",book=book,reviews=reviews,avg=avg)
+    return render_template("detail.html",book=book,reviews=reviews,count=count)
 
-
+# 대출하기
 @bp.route('/book/<int:book_id>', methods=['GET','POST'])
 def rental_click(book_id):
     if request.method == 'GET':
@@ -144,7 +137,7 @@ def rental_click(book_id):
             flash("책이 1권 대출되었습니다!")
             return render_template('detail.html',book=book)
 
-
+# 리뷰작성
 @bp.route('/book/write/<int:book_id>', methods=['POST'])
 def review_update(book_id):
     user = User.query.filter(User.id==session['login']).first()
@@ -155,22 +148,45 @@ def review_update(book_id):
     else:
         rating = request.form['star']
         content = request.form['content']
+        
+        reviews = Review.query.filter(Review.book_id==book_id).all()
+        book = Books.query.filter(Books.id==book_id).first()
+        rating_sum = int(rating)
+        star_avg = rating
+        if reviews:
+            for review in reviews:
+                rating_sum += review.rating
+            star_avg = round(rating_sum / (len(reviews)+1))
 
-        review = Review(user_id=user.id,book_id=book_id,nickname=user.nickname,rating=rating,content=content)
+        book.star = star_avg
+        review = Review(user_id=user.id,book_id=book_id,nickname=user.nickname,rating=rating,content=content,date=datetime.today())
         db.session.add(review)
         db.session.commit()
         
         flash('리뷰가 등록되었습니다.')
         return redirect(url_for('main.book_detail',book_id=book_id))
-
+# 리뷰삭제
 @bp.route('/book/delete/<int:review_id>')
 def review_delete(review_id):
-    review = Review.query.filter(Review.id==review_id).first()
+    deleted_review = Review.query.filter(Review.id==review_id).first()
+    reviews = Review.query.filter(Review.book_id==deleted_review.book_id).all()
+    book = Books.query.filter(Books.id==deleted_review.book_id).first()
 
-    db.session.delete(review)
+    rating_sum = 0
+    if reviews:
+        for review in reviews:
+            if review.id != review_id:
+                rating_sum += review.rating
+        if len(reviews) == 1:
+            star_avg = 0
+        else:
+            star_avg = round(rating_sum / (len(reviews)-1))
+
+    book.star = star_avg
+    db.session.delete(deleted_review)
     db.session.commit()
     flash('리뷰가 삭제되었습니다.')
-    return redirect(url_for('main.book_detail',book_id=review.book_id))
+    return redirect(url_for('main.book_detail',book_id=book.id))
 
 # 반납하기
 @bp.route('/return')
