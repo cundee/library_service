@@ -1,8 +1,10 @@
+from operator import add
 from flask import Blueprint, render_template, request, flash, session, redirect, url_for
 from sqlalchemy.sql.elements import *
 from models.model import *
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
+import re
 
 bp = Blueprint('main',__name__,url_prefix='/')
 
@@ -28,6 +30,20 @@ def register():
         
         user = User.query.filter(User.user_id == user_id).first()
         nickname_ = User.query.filter(User.nickname==nickname).first()
+
+        none_cnt = 0
+        if re.search(r'[0-9]',user_pw) is None:
+            none_cnt += 1
+        if re.search(r'[a-zA-Z]',user_pw) is None:
+            none_cnt += 1
+        if re.search('\W',user_pw) is None:
+            none_cnt += 1
+        
+        # 3종류 & 8자 이상
+        # 2종류 & 10자 이상
+        if ((none_cnt==0 and len(user_pw)>=8) or (none_cnt==1 and len(user_pw)>=10)) is not True:
+            flash("영어문자, 숫자, 특수문자 중 2종류 이상 사용하여 최소 8자 이상 입력하세요.")
+            return render_template('register.html')
         if user:
             flash("이미 가입된 아이디입니다.")
             return render_template('register.html')

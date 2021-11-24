@@ -10,7 +10,7 @@
         {% for item in items %}
             <form action="{{ url_for('main.return_click', book_id=item.book_id) }}" method='post'>
                 <p>{{ item.book_name }}({{ item.rental_date }} ~ )</p>
-                <input class="btn btn-primary" type="submit" value="반납하기">
+                <input class="btn btn-primary" type="submit" onclick="return confirm('반납하시겠습니까?');" value="반납하기">
             </form>
         {% endfor%}
     {% endif %}

@@ -3,7 +3,7 @@
 
 {% block page_content %}
 <div class='container'>
-    <div class='row justify-content-center'>
+    <div class='row justify-content-start'>
         <div class='col align-self-center'>
             <img src="{{ url_for('static',filename='/book_img/{}.jpg'.format(book.id)) }}" alt="None"
                 class="img-thumbnail">
@@ -34,7 +34,7 @@
                 <li class='list-group-item'>
                     <form action="{{ url_for('main.rental_click', book_id=book.id) }}" method='post'>
                         <p>5권 중 {{ book.remain }}권 이용 가능</p>
-                        <input class="btn btn-primary" type="submit" value="대출하기">
+                        <input class="btn btn-primary" type="submit" onclick="return confirm('대출하시겠습니까?');" value="대출하기">
                     </form>
                 </li>
             </ul>
@@ -60,7 +60,7 @@
                 <h5 class="card-title">{{ review.nickname }}({{ review.rating }})</h5>
                 <p class="card-text">{{review.content }}</p>
                 {% if review.user_id == session['login'] %}
-                <a href="{{ url_for('main.review_delete', review_id=review.id) }}" class="btn btn-danger">삭제하기</a>
+                <a href="{{ url_for('main.review_delete', review_id=review.id) }}" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?');">삭제하기</a>
                 {% endif %}
             </div>
         </div>
