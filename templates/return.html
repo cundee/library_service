@@ -3,16 +3,31 @@
 
 {% block page_content %}
 <div class="container">
-    <h4>반납하기</h4>
+    <div class="border-bottom mb-2">
+        <h4 class="mb-3">반납하기</h4>
+    </div>
     {% if not items %}
-        <p>반납할 책이 없습니다</p>
+    <p class='text-center mt-3'>반납할 책이 없습니다</p>
     {% else %}
-        {% for item in items %}
-            <form action="{{ url_for('main.return_click', book_id=item.book_id) }}" method='post'>
-                <p>{{ item.book_name }}({{ item.rental_date }} ~ )</p>
-                <input class="btn btn-primary" type="submit" onclick="return confirm('반납하시겠습니까?');" value="반납하기">
-            </form>
-        {% endfor%}
+    {% for item in items %}
+    <form action="{{ url_for('main.return_click', book_id=item.book_id) }}" method='post'>
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-4 border-end" style="width: 150px; height:150px;text-align:center;">
+                    <img src="{{ url_for('static', filename='/book_img/{}.jpg'.format(item.book_id)) }}"
+                        class="img-fluid rounded-start" style="max-width:100%; max-height:100%;" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.book_name }}</h5>
+                        <p class="card-text"><small class="text-muted">{{ item.rental_date }}~</small></p>
+                        <input class="btn btn-primary" type="submit" onclick="return confirm('반납하시겠습니까?');" value="반납하기">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% endfor%}
     {% endif %}
 </div>
 {% endblock%}

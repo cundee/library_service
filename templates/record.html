@@ -3,12 +3,27 @@
 
 {% block page_content %}
 <div class="container">
-    <h4>대출기록</h4>
+    <div class="border-bottom mb-2">
+        <h4 class='mb-3'>대출기록</h4>
+    </div>
     {% if not items %}
-        <p>대여 기록이 없습니다</p>
+        <p class='text-center mt-3'>대출 기록이 없습니다</p>
     {% else %}
         {% for item in items %}
-            <p>{{ item.book_name }}({{ item.rental_date }} ~ {{ item.return_date }})</p>
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4 border-end" style="width: 150px; height:150px;text-align:center;">
+                        <img src="{{ url_for('static', filename='/book_img/{}.jpg'.format(item.book_id)) }}"
+                            class="img-fluid rounded-start" style="max-width:100%; max-height:100%;" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.book_name }}</h5>
+                            <p class="card-text"><small class="text-muted">{{ item.rental_date }} ~ {{ item.return_date }}</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% endfor%}
     {% endif %}
 </div>

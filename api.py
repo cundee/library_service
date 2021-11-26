@@ -11,8 +11,14 @@ bp = Blueprint('main',__name__,url_prefix='/')
 # 메인페이지
 @bp.route('/')
 def home():
-    book_list = Books.query.order_by(Books.id).all()
-    return render_template('main.html',book_list=book_list)
+    kw = request.args.get('kw',type=str,default='')
+    if kw:
+        search = '%%{}%%'.format(kw)
+        book_list = Books.query.filter(Books.book_name.like(search)).order_by(Books.id).all()
+    else:
+        book_list = Books.query.order_by(Books.id).all()
+    return render_template('main.html',book_list=book_list,kw=kw)
+
 
 
 # 회원가입
@@ -43,16 +49,16 @@ def register():
         # 2종류 & 10자 이상
         if ((none_cnt==0 and len(user_pw)>=8) or (none_cnt==1 and len(user_pw)>=10)) is not True:
             flash("영어문자, 숫자, 특수문자 중 2종류 이상 사용하여 최소 8자 이상 입력하세요.")
-            return render_template('register.html')
+            return render_template('register.html',user_id=user_id,user_pw=user_pw,user_pw2=user_pw2,nickname=nickname,address=address,telephone=telephone)
         if user:
             flash("이미 가입된 아이디입니다.")
-            return render_template('register.html')
+            return render_template('register.html',user_id=user_id,user_pw=user_pw,user_pw2=user_pw2,nickname=nickname,address=address,telephone=telephone)
         if user_pw != user_pw2:
             flash("비밀번호 확인이 일치하지 않습니다.") 
-            return render_template('register.html')
+            return render_template('register.html',user_id=user_id,user_pw=user_pw,user_pw2=user_pw2,nickname=nickname,address=address,telephone=telephone)
         if nickname_:
             flash("이미 사용중인 닉네임입니다.")
-            return render_template('register.html')
+            return render_template('register.html',user_id=user_id,user_pw=user_pw,user_pw2=user_pw2,nickname=nickname,address=address,telephone=telephone)
         else:
             pw_hash = generate_password_hash(user_pw)
             user = User(user_id=user_id,user_pw=pw_hash,nickname=nickname,address=address,telephone=telephone)
@@ -165,6 +171,7 @@ def review_update(book_id):
         
         flash('리뷰가 등록되었습니다.')
         return redirect(url_for('main.book_detail',book_id=book_id))
+
 # 리뷰삭제
 @bp.route('/book/delete/<int:review_id>')
 def review_delete(review_id):

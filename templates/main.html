@@ -2,17 +2,30 @@
 {% block title %}메인 페이지{% endblock %} 
 
 {% block page_content %} 
-{% if book_list %}
 <div class="container">
+    <form action="{{ url_for('main.home') }}" method="get">
+        <div class="row justify-content-end my-3">
+            <div class="input-group">
+                <input type="text" class="form-control" name='kw' placeholder="검색할 책의 제목을 입력하세요." value="{{ kw }}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="submit">찾기</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% if book_list %}
+    <h5>검색 결과<span class="badge rounded-pill bg-light text-dark">{{ book_list|count }}</span></h5>
     <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for book in book_list%}
         <div class="col">
             <div class="card h-100">
-                <div class="card-header">{{ book.id }}</div>
-                <img 
-                    src="{{ url_for('static', filename='/book_img/{}.jpg'.format(book.id)) }}" 
-                    height="200px"
-                />
+                <div class="card-header">{{ loop.index }}</div>
+                <div class='card-img-top border-bottom' style="width: 300px; height:200px;text-align:center;">
+                    <img
+                        src="{{ url_for('static', filename='/book_img/{}.jpg'.format(book.id)) }}"
+                        style="max-width:100%;max-height:100%;"
+                    />
+                </div>
                 <div class="card-body d-flex align-content-between flex-wrap">
                     <a href="{{ url_for('main.book_detail',book_id=book.id) }}" style="text-decoration:none; color:black;">
                         <h5 class="card-title">{{ book.book_name }}</h5>
@@ -27,7 +40,7 @@
                                 {% endif %}
                             {% endfor %}
                         </div>
-                        <p>{{ book.remain }}권 남음</p>
+                        <p>{{ book.remain }}권 이용 가능</p>
                     </div>
                 </div>
             </div>
