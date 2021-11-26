@@ -3,12 +3,12 @@
 
 {% block page_content %}
 <div class="row container d-flex justify-content-center">
-    <div class="card" style="width:50%">
+    <div class="card mt-5" style="width:50%">
         <h4 class='text-center mt-4'>로그인</h4>
         <form action="{{ url_for('main.login') }}" method='post' class="row g-3 m-3">
             <div class='col-9'>
                 <div class="form-floating">
-                    <input type="email" name="user_id" id="floatingInputId" class="form-control" placeholder="아이디 입력" required>
+                    <input type="email" name="user_id" id="floatingInputId" class="form-control" placeholder="아이디 입력" autocomplete='off' required>
                     <label for="floatingInputId">ID</label>
                 </div>
                 <div class="form-floating">

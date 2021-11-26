@@ -15,25 +15,26 @@
 </head>
 
 <body>
-    <!-- 부트스트랩 내비게이션 -->
-    {% include "navbar.html" %}
-    {% block content %}
-    <div class="container my-3">
-        <!-- flash -->
-        {% for message in get_flashed_messages() %}
-        <div class="alert alert-info alert-dismissible fade show" role="alert">{{ message }}<button type="button"
-                class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
-        {% endfor %}
-        <!-- 각 페이지의 내용 -->
-        {% block page_content %} {% endblock %}
+    <div id="body-wrapper">
+        <!-- 부트스트랩 내비게이션 -->
+        {% include "navbar.html" %}
+        {% block content %}
+        <div class="container my-3">
+            <!-- flash -->
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">{{ message }}<button type="button"
+                    class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+            {% endfor %}
+            <!-- 각 페이지의 내용 -->
+            {% block page_content %} {% endblock %}
+        </div>
+        {% endblock %}
+        <footer class="text-center text-lg-start bg-light text-muted w-100 align-self-center">
+            <div class="text-center mt-4">
+                <p>Elice Libary:<small>Desiged By HyunHo</small></p>
+              </div>
+        </footer>
     </div>
-    {% endblock %}
-    <footer class="text-center text-lg-start bg-light text-muted w-100" style="position : relative; bottom:0;">
-        <div class="text-center d-flex justify-content-center">
-            <p>Elice Libary:</p>
-            <p><small>Desiged By HyunHo</small></p>
-          </div>
-    </footer>
 </body>
 
 </html>

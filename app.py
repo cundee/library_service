@@ -1,12 +1,10 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from database import db
 from flask_migrate import Migrate
+from models.model import *
 import api
 import config
 import os
-
-db = SQLAlchemy()
-
 
 def create_app():
     app = Flask(__name__)

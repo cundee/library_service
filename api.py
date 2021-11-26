@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, flash, session, redirect,
 from sqlalchemy.sql.elements import *
 from models.model import *
 from werkzeug.security import check_password_hash, generate_password_hash
-from datetime import datetime
+from datetime import timedelta,date
 import re
 
 bp = Blueprint('main',__name__,url_prefix='/')
@@ -18,8 +18,7 @@ def home():
     else:
         book_list = Books.query.order_by(Books.id).all()
     return render_template('main.html',book_list=book_list,kw=kw)
-
-
+    
 
 # 회원가입
 @bp.route('/register', methods=['GET','POST'])
@@ -102,6 +101,7 @@ def logout():
     flash("로그아웃")
     return redirect(url_for("main.home"))
 
+
 # 책 상세정보
 @bp.route('/book/<int:book_id>')
 def book_detail(book_id):
@@ -114,6 +114,7 @@ def book_detail(book_id):
 
     return render_template("detail.html",book=book,reviews=reviews,count=count)
 
+
 # 대출하기
 @bp.route('/book/<int:book_id>', methods=['GET','POST'])
 def rental_click(book_id):
@@ -124,9 +125,11 @@ def rental_click(book_id):
             flash("먼저 로그인 해주세요")
             return redirect(url_for('main.login'))
         
+        today = date.today()
         user = User.query.filter(User.id==session['login']).first()
         book = Books.query.filter(Books.id==book_id).first()
         rental_info = Rental.query.filter(Rental.user_id==user.id,Rental.book_id==book.id,Rental.return_date==None).first()
+        late_info = Rental.query.filter(Rental.user_id==user.id,Rental.return_due_date<today,Rental.return_date==None).first()
         remain = book.remain
 
         if remain == 0:
@@ -135,9 +138,14 @@ def rental_click(book_id):
         elif rental_info:
             flash("이미 대출 중입니다")
             return redirect(url_for("main.book_detail",book_id=book.id))
+        elif (user.late_fee!=0) or (late_info):
+            flash("대출중인 책 중에 연체된 도서가 있습니다. 도서를 반납하고 연체료를 지불해주세요.")
+            return redirect(url_for("main.book_detail",book_id=book.id))
         else:
             book.remain = remain - 1
-            rental = Rental(user_id=user.id,book_id=book.id,book_name=book.book_name,rental_date=datetime.today())
+            date_today = date.today()
+            return_due_date = date_today + timedelta(days=15)
+            rental = Rental(user_id=user.id,book_id=book.id,book_name=book.book_name,rental_date=date_today, return_due_date=return_due_date)
             db.session.add(rental)
             db.session.commit()
             flash("책이 1권 대출되었습니다!")
@@ -165,7 +173,7 @@ def review_update(book_id):
             star_avg = round(rating_sum / (len(reviews)+1))
 
         book.star = star_avg
-        review = Review(user_id=user.id,book_id=book_id,nickname=user.nickname,rating=rating,content=content,date=datetime.today())
+        review = Review(user_id=user.id,book_id=book_id,nickname=user.nickname,rating=rating,content=content,date=date.today())
         db.session.add(review)
         db.session.commit()
         
@@ -195,18 +203,19 @@ def review_delete(review_id):
     flash('리뷰가 삭제되었습니다.')
     return redirect(url_for('main.book_detail',book_id=book.id))
 
-# 반납하기
+# 반납하기 페이지
 @bp.route('/return')
 def my_return():
     if session.get('login') is None:
         flash("먼저 로그인 해주세요")
         return redirect(url_for('main.login'))
-    
+    user = User.query.filter(User.id==session['login']).first()
     items = Rental.query.filter(Rental.user_id==session['login'],Rental.return_date==None).all()
-    return render_template('return.html',items=items)
+    today = date.today()
+    return render_template('return.html',items=items,user=user,today=today)
+        
 
-
-
+# 반납하기 클릭
 @bp.route('/return/<int:book_id>', methods=['GET','POST'])
 def return_click(book_id):
     if request.method == 'GET':
@@ -217,7 +226,18 @@ def return_click(book_id):
         if rental_info:
             remain = book.remain
             book.remain = remain + 1
-            rental_info.return_date = datetime.today()
+            today = date.today()
+            rental_info.return_date = today
+
+            if rental_info.return_due_date < today:
+                date_diff = today - rental_info.return_due_date
+                diff = date_diff.days
+                user = User.query.filter(User.id==session['login']).first()
+                user.late_fee = diff*100
+                db.session.commit()
+                flash("연체료가 발생하였습니다. 연체료 지불 후 대출이 가능합니다.")
+                return redirect(url_for('main.my_return'))
+            
             db.session.commit()
             flash("반납되었습니다")
             return redirect(url_for('main.my_return'))

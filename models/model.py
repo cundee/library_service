@@ -1,4 +1,4 @@
-from app import db
+from database import db
 
 class Books(db.Model):
     __tablename__ = 'books'
@@ -25,6 +25,7 @@ class User(db.Model):
     nickname             = db.Column(db.String(20), nullable=False, unique=True)
     address              = db.Column(db.String(255), nullable=False)
     telephone            = db.Column(db.String(11), nullable=False)
+    late_fee             = db.Column(db.Integer, default=0)
 
 
 class Rental(db.Model):
@@ -36,6 +37,7 @@ class Rental(db.Model):
     book_name            = db.Column(db.String(50), nullable=False)
     rental_date          = db.Column(db.Date, nullable=False)
     return_date          = db.Column(db.Date)
+    return_due_date      = db.Column(db.Date)
 
 class Review(db.Model):
     __tablename__ = 'review'
