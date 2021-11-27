@@ -1,4 +1,3 @@
-from operator import add
 from flask import Blueprint, render_template, request, flash, session, redirect, url_for
 from sqlalchemy.sql.elements import *
 from models.model import *
@@ -41,11 +40,9 @@ def register():
             none_cnt += 1
         if re.search(r'[a-zA-Z]',user_pw) is None:
             none_cnt += 1
-        if re.search('\W',user_pw) is None:
+        if re.search(r'\W',user_pw) is None:
             none_cnt += 1
         
-        # 3종류 & 8자 이상
-        # 2종류 & 10자 이상
         if ((none_cnt==0 and len(user_pw)>=8) or (none_cnt==1 and len(user_pw)>=10)) is not True:
             flash("영어문자, 숫자, 특수문자 중 2종류 이상 사용하여 최소 8자 이상 입력하세요.")
             return render_template('register.html',user_id=user_id,user_pw=user_pw,user_pw2=user_pw2,nickname=nickname,address=address,telephone=telephone)
@@ -149,7 +146,7 @@ def rental_click(book_id):
             db.session.add(rental)
             db.session.commit()
             flash("책이 1권 대출되었습니다!")
-            return render_template('detail.html',book=book)
+            return redirect(url_for("main.book_detail",book_id=book.id))
 
 # 리뷰작성
 @bp.route('/book/write/<int:book_id>', methods=['POST'])
