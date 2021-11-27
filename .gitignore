@@ -2,5 +2,4 @@
 __pycache__/
 books.csv
 *.zip
-.env
 test.py

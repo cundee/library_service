@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from models.model import *
 import api
 import config
-
+import os
 
 def create_app():
     app = Flask(__name__)
@@ -13,7 +13,7 @@ def create_app():
     Migrate().init_app(app, db)
 
     app.register_blueprint(api.bp)
-    app.secret_key = "SUPER SECERET KEY"
+    app.secret_key = os.environ.get('SECRET_KEY')
     
 
     return app
