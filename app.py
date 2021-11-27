@@ -13,7 +13,7 @@ def create_app():
     Migrate().init_app(app, db)
 
     app.register_blueprint(api.bp)
-    app.secret_key = os.environ.get('SECRET_KEY')
+    app.secret_key = "SUPER SECRET KEY"
     
 
     return app
