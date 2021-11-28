@@ -230,7 +230,7 @@ def return_click(book_id):
                 date_diff = today - rental_info.return_due_date
                 diff = date_diff.days
                 user = User.query.filter(User.id==session['login']).first()
-                user.late_fee = diff*100
+                user.late_fee += diff*100
                 db.session.commit()
                 flash("연체료가 발생하였습니다. 연체료 지불 후 대출이 가능합니다.")
                 return redirect(url_for('main.my_return'))
